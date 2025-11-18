@@ -14,8 +14,8 @@ venv/
 env/
 ENV/
 
-# Credentials
-profiles.yml
+# Credentials - but allow profiles.yml for Snowflake Workspaces
+# profiles.yml
 .env
 *.pem
 *.key
@@ -39,4 +39,3 @@ Thumbs.db
 *.parquet
 *.json
 staging/
-

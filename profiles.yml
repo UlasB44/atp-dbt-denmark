@@ -1,0 +1,16 @@
+atp_denmark:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: UTYEYAD-XT83149
+      user: admin
+      password: TpqTqe4v@M9Usorku@RA
+      role: SYSADMIN
+      warehouse: ATP_ETL_WH
+      database: ATP_PENSION
+      schema: SILVER
+      threads: 4
+      client_session_keep_alive: True
+      query_tag: "dbt_atp_denmark"
+
