@@ -1,0 +1,29 @@
+atp_denmark:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: YOUR_SNOWFLAKE_ACCOUNT  # e.g., abc12345.eu-west-1
+      user: YOUR_USERNAME
+      password: YOUR_PASSWORD  # Or use environment variable
+      role: SYSADMIN
+      warehouse: ATP_ETL_WH
+      database: ATP_PENSION
+      schema: SILVER
+      threads: 4
+      client_session_keep_alive: True
+      query_tag: "dbt_atp_denmark"
+    
+    prod:
+      type: snowflake
+      account: YOUR_SNOWFLAKE_ACCOUNT
+      user: YOUR_USERNAME
+      password: YOUR_PASSWORD
+      role: SYSADMIN
+      warehouse: ATP_ETL_WH
+      database: ATP_PENSION
+      schema: SILVER
+      threads: 8
+      client_session_keep_alive: True
+      query_tag: "dbt_atp_denmark_prod"
+

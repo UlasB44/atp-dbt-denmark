@@ -1,0 +1,52 @@
+name: "atp_denmark"
+version: "2.0.0"
+config-version: 2
+
+profile: "atp_denmark"
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+analysis-paths: ["analyses"]
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+vars:
+  start_date: '2023-01-01'
+  end_date: '2025-12-31'
+
+models:
+  atp_denmark:
+    pension:
+      silver:
+        +database: "ATP_PENSION"
+        +schema: "SILVER"
+        +materialized: incremental
+        +tags: ["pension", "silver"]
+        +on_schema_change: "append_new_columns"
+      gold:
+        +database: "ATP_PENSION"
+        +schema: "GOLD"
+        +materialized: table
+        +tags: ["pension", "gold"]
+    housing:
+      silver:
+        +database: "ATP_HOUSING_BENEFITS"
+        +schema: "SILVER"
+        +materialized: incremental
+        +tags: ["housing", "silver"]
+      gold:
+        +database: "ATP_HOUSING_BENEFITS"
+        +schema: "GOLD"
+        +materialized: table
+        +tags: ["housing", "gold"]
+    integration:
+      silver:
+        +database: "ATP_INTEGRATION"
+        +schema: "SILVER"
+        +materialized: table
+        +tags: ["integration", "silver"]
+

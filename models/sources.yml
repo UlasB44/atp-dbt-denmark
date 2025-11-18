@@ -1,0 +1,76 @@
+version: 2
+
+sources:
+  - name: pension_raw
+    database: ATP_PENSION
+    schema: RAW
+    description: "Raw pension administration data from ATP Denmark"
+    tables:
+      - name: members
+        description: "ATP pension members with CPR numbers"
+        columns:
+          - name: cpr_number
+            description: "Danish CPR number (DDMMYY-XXXX)"
+            tests:
+              - not_null
+              - unique
+      
+      - name: employers
+        description: "Danish employers contributing to ATP"
+        columns:
+          - name: cvr_number
+            description: "Danish CVR number (company registration)"
+            tests:
+              - not_null
+              - unique
+      
+      - name: employment_relationships
+        description: "Employment relationships between members and employers"
+        columns:
+          - name: cpr_number
+            tests:
+              - not_null
+          - name: cvr_number
+            tests:
+              - not_null
+      
+      - name: contributions
+        description: "Monthly pension contributions"
+        columns:
+          - name: contribution_id
+            tests:
+              - unique
+              - not_null
+          - name: total_amount
+            tests:
+              - not_null
+
+  - name: housing_raw
+    database: ATP_HOUSING_BENEFITS
+    schema: RAW
+    description: "Housing benefits administered by ATP"
+    tables:
+      - name: applications
+        description: "Housing benefit applications"
+        columns:
+          - name: application_id
+            tests:
+              - unique
+              - not_null
+      
+      - name: payments
+        description: "Monthly housing benefit payments"
+
+  - name: integration_raw
+    database: ATP_INTEGRATION
+    schema: RAW
+    description: "External system integration data"
+    tables:
+      - name: skat_income_data
+        description: "Income data from Danish Tax Authority (SKAT)"
+      
+      - name: bbr_dwelling_data
+        description: "Building registry data (BBR)"
+      
+      - name: cpr_registry_updates
+        description: "CPR registry updates"
