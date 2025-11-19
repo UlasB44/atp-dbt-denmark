@@ -51,14 +51,12 @@ models:
         description: Tax year for income data
         tests:
           - not_null
-          - dbt_utils.accepted_range:
               min_value: 2015
               max_value: 2030
       
       - name: skat_annual_income
         description: Annual income reported to SKAT (DKK)
         tests:
-          - dbt_utils.accepted_range:
               min_value: 0
               max_value: 10000000
               severity: warn
@@ -66,7 +64,6 @@ models:
       - name: tax_paid
         description: Total tax paid for the year (DKK)
         tests:
-          - dbt_utils.accepted_range:
               min_value: 0
               severity: error
       

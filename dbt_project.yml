@@ -14,6 +14,9 @@ clean-targets:
   - "target"
   - "dbt_packages"
 
+# Add packages-install-path to tell dbt where packages are
+packages-install-path: "dbt_packages"
+
 vars:
   start_date: '2023-01-01'
   end_date: '2025-12-31'

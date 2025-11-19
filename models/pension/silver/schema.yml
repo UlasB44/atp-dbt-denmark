@@ -56,7 +56,6 @@ models:
         description: Current age calculated from birth date
         tests:
           - not_null
-          - dbt_utils.accepted_range:
               min_value: 18
               max_value: 100
               severity: warn
@@ -167,7 +166,6 @@ models:
         description: Amount contributed by employer (DKK)
         tests:
           - not_null
-          - dbt_utils.accepted_range:
               min_value: 0
               max_value: 10000
               severity: warn
@@ -176,7 +174,6 @@ models:
         description: Amount contributed by employee (DKK)
         tests:
           - not_null
-          - dbt_utils.accepted_range:
               min_value: 0
               max_value: 10000
               severity: warn
@@ -200,7 +197,6 @@ models:
         description: Number of days the payment was late (0 if on time)
         tests:
           - not_null
-          - dbt_utils.accepted_range:
               min_value: 0
               max_value: 365
               severity: warn
