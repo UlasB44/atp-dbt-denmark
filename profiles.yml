@@ -6,10 +6,10 @@ atp_denmark:
       account: UTYEYAD-XT83149
       user: admin
       password: TpqTqe4v@M9Usorku@RA
-      role: SYSADMIN
+      role: ATP_ADMIN
       warehouse: ATP_ETL_WH
       database: ATP_PENSION
-      schema: SILVER
+      schema: PUBLIC
       threads: 4
       client_session_keep_alive: True
       query_tag: "dbt_atp_denmark"
