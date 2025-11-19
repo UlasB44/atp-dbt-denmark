@@ -26,25 +26,16 @@ cleaned AS (
         first_name,
         last_name,
         CONCAT(first_name, ' ', last_name) AS full_name,
-        
-        -- Parse birth date from CPR (DDMMYY-XXXX)
-        TO_DATE(LEFT(cpr_number, 6), 'DDMMYY') AS birth_date,
+        gender,
+        birth_date,
         
         -- Calculate age
-        DATEDIFF('year', TO_DATE(LEFT(cpr_number, 6), 'DDMMYY'), CURRENT_DATE()) AS age,
-        
-        -- Gender from CPR (last digit: odd=male, even=female)
-        CASE 
-            WHEN MOD(CAST(RIGHT(cpr_number, 1) AS INTEGER), 2) = 0 THEN 'Female'
-            ELSE 'Male'
-        END AS gender,
+        DATEDIFF('year', birth_date, CURRENT_DATE()) AS age,
         
         civil_status,
         street_address,
         postal_code,
         city,
-        email,
-        phone_number,
         is_active,
         registration_date,
         last_updated,
@@ -53,7 +44,7 @@ cleaned AS (
         CASE
             WHEN LENGTH(cpr_number) <> 11 THEN FALSE
             WHEN cpr_number NOT LIKE '%-%' THEN FALSE
-            WHEN email IS NULL THEN FALSE
+            WHEN first_name IS NULL OR last_name IS NULL THEN FALSE
             ELSE TRUE
         END AS is_valid_record,
         
