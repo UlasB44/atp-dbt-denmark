@@ -54,11 +54,9 @@ models:
       
       - name: skat_annual_income
         description: Annual income reported to SKAT (DKK)
-        tests:
       
       - name: tax_paid
         description: Total tax paid for the year (DKK)
-        tests:
       
       - name: application_annual_income
         description: Income declared on housing benefit application (DKK)
