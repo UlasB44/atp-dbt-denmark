@@ -1,0 +1,81 @@
+version: 2
+
+models:
+  - name: housing_benefits_summary
+    description: |
+      **Member-level housing benefits summary and payment history**
+      
+      Comprehensive view of each member's housing benefit activity:
+      - Application history and approval rates
+      - Total benefits paid over time
+      - Average monthly benefit amounts
+      - Payment status tracking
+      
+      **Refresh**: Daily
+      **Grain**: One row per member (cpr_number)
+      **Use Cases**:
+      - Member benefit inquiries
+      - Approval rate analysis
+      - Budget forecasting
+      - Fraud detection
+      
+      **Owner**: Housing Benefits Analytics Team
+      
+    columns:
+      - name: cpr_number
+        description: Member's unique CPR number
+        tests:
+          - unique
+          - not_null
+      
+      - name: full_name
+        description: Member's full name
+        tests:
+          - not_null
+      
+      - name: city
+        description: City of residence
+      
+      - name: total_applications
+        description: Total number of applications submitted
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+      
+      - name: approved_applications
+        description: Number of approved applications
+        tests:
+          - not_null
+      
+      - name: rejected_applications
+        description: Number of rejected applications
+        tests:
+          - not_null
+      
+      - name: approval_rate
+        description: Percentage of applications approved
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+      
+      - name: total_benefits_paid
+        description: Total amount of benefits paid (DKK)
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              severity: error
+      
+      - name: avg_monthly_benefit
+        description: Average monthly benefit amount (DKK)
+      
+      - name: last_payment_date
+        description: Date of most recent payment
+      
+      - name: dbt_updated_at
+        description: Last dbt processing timestamp
+        tests:
+          - not_null
+

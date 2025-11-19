@@ -1,0 +1,92 @@
+version: 2
+
+models:
+  - name: income_verification
+    description: |
+      **Cross-system income verification and discrepancy detection**
+      
+      Compares declared income from housing benefit applications against
+      official tax authority (SKAT) records to identify:
+      - Income discrepancies
+      - Missing tax data
+      - Potential fraud cases
+      - Data quality issues
+      
+      **Sources**:
+      - ATP_INTEGRATION.RAW.SKAT_INCOME_DATA
+      - Housing benefit applications
+      - Member master data
+      
+      **Refresh**: Daily
+      **Use Cases**:
+      - Fraud detection and prevention
+      - Application verification
+      - Compliance auditing
+      - Data quality monitoring
+      
+      **Owner**: Compliance & Risk Team
+      **Compliance**: GDPR Article 6(1)(c) - Legal obligation
+      
+    columns:
+      - name: cpr_number
+        description: Member's unique CPR number
+        tests:
+          - not_null
+          - relationships:
+              to: ref('members_clean')
+              field: cpr_number
+      
+      - name: full_name
+        description: Member's full name
+        tests:
+          - not_null
+      
+      - name: age
+        description: Member's current age
+      
+      - name: city
+        description: City of residence
+      
+      - name: tax_year
+        description: Tax year for income data
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 2015
+              max_value: 2030
+      
+      - name: skat_annual_income
+        description: Annual income reported to SKAT (DKK)
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 10000000
+              severity: warn
+      
+      - name: tax_paid
+        description: Total tax paid for the year (DKK)
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              severity: error
+      
+      - name: application_annual_income
+        description: Income declared on housing benefit application (DKK)
+      
+      - name: income_match_status
+        description: |
+          Income verification status:
+          - 'Match': Income figures align within 10% tolerance
+          - 'Discrepancy': Income differs by more than 10%
+          - 'No SKAT Data': Missing tax authority data
+          - 'No Application Data': No housing benefit application
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Match', 'Discrepancy', 'No SKAT Data', 'No Application Data']
+      
+      - name: dbt_updated_at
+        description: Last dbt processing timestamp
+        tests:
+          - not_null
+

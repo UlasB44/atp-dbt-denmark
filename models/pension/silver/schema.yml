@@ -1,0 +1,228 @@
+version: 2
+
+models:
+  - name: members_clean
+    description: |
+      **Cleansed and validated ATP pension member data**
+      
+      This model provides high-quality member records with:
+      - Valid CPR numbers (Danish personal ID)
+      - Calculated age from birth date
+      - Gender derived from CPR
+      - Data quality flags for invalid records
+      
+      **Source**: ATP_PENSION.RAW.MEMBERS
+      **Refresh**: Incremental (updates only changed records)
+      **Owner**: Data Engineering Team
+      
+    columns:
+      - name: cpr_number
+        description: Danish personal identification number (format DDMMYY-XXXX)
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              to: source('atp_pension_raw', 'MEMBERS')
+              field: cpr_number
+      
+      - name: first_name
+        description: Member's first name
+        tests:
+          - not_null
+      
+      - name: last_name
+        description: Member's last name
+        tests:
+          - not_null
+      
+      - name: full_name
+        description: Concatenated first and last name
+        tests:
+          - not_null
+      
+      - name: gender
+        description: Gender (M/F) from CPR number
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['M', 'F']
+      
+      - name: birth_date
+        description: Date of birth extracted from CPR
+        tests:
+          - not_null
+      
+      - name: age
+        description: Current age calculated from birth date
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 18
+              max_value: 100
+              severity: warn
+      
+      - name: civil_status
+        description: Marital status
+        tests:
+          - accepted_values:
+              values: ['Single', 'Married', 'Divorced', 'Widowed']
+      
+      - name: postal_code
+        description: Danish postal code
+        tests:
+          - not_null
+      
+      - name: city
+        description: City of residence
+        tests:
+          - not_null
+      
+      - name: is_active
+        description: Whether the member is currently active
+        tests:
+          - not_null
+      
+      - name: is_valid_record
+        description: Data quality flag (true if all validations pass)
+        tests:
+          - not_null
+      
+      - name: dbt_updated_at
+        description: Timestamp when this record was last processed by dbt
+        tests:
+          - not_null
+
+  - name: contributions_enriched
+    description: |
+      **Enriched pension contribution data with member and employer details**
+      
+      This model combines contribution transactions with:
+      - Member demographic information
+      - Employer company details
+      - Payment timing metrics
+      - Anomaly detection flags
+      
+      **Source**: ATP_PENSION.RAW.CONTRIBUTIONS
+      **Refresh**: Incremental (processes new contributions)
+      **Owner**: Data Engineering Team
+      **Use Case**: Payment analytics, compliance monitoring, fraud detection
+      
+    columns:
+      - name: contribution_id
+        description: Unique identifier for each contribution transaction
+        tests:
+          - unique
+          - not_null
+      
+      - name: cpr_number
+        description: Member's CPR number
+        tests:
+          - not_null
+          - relationships:
+              to: ref('members_clean')
+              field: cpr_number
+      
+      - name: cvr_number
+        description: Employer's CVR number (Danish company registration)
+        tests:
+          - not_null
+          - relationships:
+              to: source('atp_pension_raw', 'EMPLOYERS')
+              field: cvr_number
+      
+      - name: member_name
+        description: Member's full name (from members_clean)
+      
+      - name: member_age
+        description: Member's age at time of contribution
+      
+      - name: employer_name
+        description: Company name of the employer
+      
+      - name: employer_industry
+        description: Industry sector (NACE classification)
+      
+      - name: employer_size
+        description: Company size category (Micro, Small, Medium, Large)
+        tests:
+          - accepted_values:
+              values: ['Micro', 'Small', 'Medium', 'Large']
+      
+      - name: contribution_period
+        description: Period for which the contribution applies (YYYY-MM format)
+        tests:
+          - not_null
+      
+      - name: contribution_year
+        description: Year extracted from contribution period
+        tests:
+          - not_null
+      
+      - name: contribution_month
+        description: Month extracted from contribution period
+        tests:
+          - not_null
+      
+      - name: employer_amount
+        description: Amount contributed by employer (DKK)
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 10000
+              severity: warn
+      
+      - name: employee_amount
+        description: Amount contributed by employee (DKK)
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 10000
+              severity: warn
+      
+      - name: total_amount
+        description: Total contribution amount (DKK)
+        tests:
+          - not_null
+      
+      - name: payment_date
+        description: Date when payment was received
+        tests:
+          - not_null
+      
+      - name: is_late
+        description: Flag indicating if payment was late
+        tests:
+          - not_null
+      
+      - name: days_late
+        description: Number of days the payment was late (0 if on time)
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 365
+              severity: warn
+      
+      - name: is_anomaly
+        description: Flag for unusual contribution amounts
+        tests:
+          - not_null
+      
+      - name: expected_amount
+        description: Expected standard contribution (270 DKK)
+      
+      - name: amount_variance
+        description: Difference from expected amount
+      
+      - name: created_at
+        description: Original creation timestamp
+        tests:
+          - not_null
+      
+      - name: dbt_updated_at
+        description: Timestamp when dbt last processed this record
+        tests:
+          - not_null
+

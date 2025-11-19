@@ -1,167 +1,168 @@
 # ATP Denmark - dbt Data Transformation Project
 
-## Overview
-Production-ready dbt project for ATP Denmark pension administration data transformation on Snowflake.
+## 📋 Overview
 
-## Project Structure
+This dbt project transforms raw ATP data into analytics-ready datasets for:
+- **Pension administration** (5.2M members, 112M contributions)
+- **Housing benefits** (400K applications)
+- **External data integration** (SKAT, BBR, CPR)
+
+## 🏗️ Architecture
+
 ```
-models/
-├── sources.yml              # Source definitions for RAW tables
-├── pension/
-│   ├── silver/             # Cleansed, enriched pension data
-│   │   ├── members_clean.sql
-│   │   └── contributions_enriched.sql
-│   └── gold/               # Business KPIs and aggregates
-│       ├── member_contribution_summary.sql
-│       └── employer_contribution_analytics.sql
-├── housing/
-│   ├── silver/             # Housing benefits data
-│   │   └── applications_enriched.sql
-│   └── gold/
-│       └── housing_benefits_summary.sql
-└── integration/
-    └── silver/             # External system integrations
-        └── income_verification.sql
+RAW → SILVER → GOLD
 ```
 
-## Data Pipeline
-```
-RAW (Ingestion)
-  ↓ dbt models
-SILVER (Cleansed, enriched, validated)
-  ↓ dbt models
-GOLD (Business KPIs, aggregates, analytics-ready)
-```
+- **RAW**: Source data from operational systems
+- **SILVER**: Cleansed, validated, enriched data
+- **GOLD**: Business KPIs and aggregated analytics
 
-## Models
+## 📊 Data Models
 
-### SILVER Layer
-- **members_clean**: Enriched member data with age calculation, gender parsing, data quality flags
-- **contributions_enriched**: Contributions joined with member/employer details, payment analytics, anomaly detection
-- **applications_enriched**: Housing benefit applications with processing times, eligibility checks
-- **income_verification**: Cross-reference housing applications with SKAT tax authority data
+### Pension Domain
 
-### GOLD Layer
-- **member_contribution_summary**: Per-member lifetime value, payment behavior, risk scoring
-- **employer_contribution_analytics**: Compliance metrics, industry benchmarks, high-risk employer flagging
-- **housing_benefits_summary**: Benefit utilization rates, error tracking, approval metrics
+#### Silver Layer
+- **`members_clean`**: Validated member records with CPR validation
+- **`contributions_enriched`**: Contribution transactions with member/employer details
 
-## Key Features
-- ✅ **Data Quality**: Validation flags, anomaly detection, cross-system reconciliation
-- ✅ **Risk Scoring**: Payment risk categorization (Low/Medium/High)
-- ✅ **Compliance**: Fraud detection via income verification with external systems
-- ✅ **Performance**: Optimized SQL, incremental materialization where applicable
-- ✅ **Documentation**: Inline comments explaining business logic
+#### Gold Layer
+- **`member_contribution_summary`**: Member-level contribution analytics and risk scores
+- **`employer_contribution_analytics`**: Employer payment behavior and compliance metrics
 
-## Setup
+### Housing Benefits Domain
 
-### Prerequisites
-- Snowflake account with ATP databases (ATP_PENSION, ATP_HOUSING_BENEFITS, ATP_INTEGRATION)
-- dbt-snowflake installed (`pip install dbt-snowflake`)
-- Python 3.10+
+#### Silver Layer
+- **`applications_enriched`**: Housing benefit applications with member demographics
 
-### Configuration
-1. Create `profiles.yml`:
-```yaml
-atp_denmark:
-  target: dev
-  outputs:
-    dev:
-      type: snowflake
-      account: YOUR_ACCOUNT
-      user: YOUR_USER
-      password: YOUR_PASSWORD
-      role: SYSADMIN
-      warehouse: ATP_ETL_WH
-      database: ATP_PENSION
-      schema: SILVER
-      threads: 4
-      client_session_keep_alive: True
-```
+#### Gold Layer
+- **`housing_benefits_summary`**: Member-level benefit history and approval rates
 
-2. Set environment variables (optional):
+### Integration Domain
+
+#### Silver Layer
+- **`income_verification`**: Cross-system income validation (SKAT vs applications)
+
+## 🧪 Data Quality Tests
+
+All models include comprehensive tests:
+- ✅ **Uniqueness**: Primary keys are unique
+- ✅ **Not null**: Required fields always populated
+- ✅ **Referential integrity**: Foreign keys are valid
+- ✅ **Accepted values**: Enums match expected values
+- ✅ **Range checks**: Numeric values within reasonable bounds
+
+### Running Tests
+
 ```bash
-export SNOWFLAKE_ACCOUNT=your_account
-export SNOWFLAKE_USER=your_user
-export SNOWFLAKE_PASSWORD=your_password
-```
-
-### Run dbt
-```bash
-# Install dependencies
-pip install dbt-snowflake
-
-# Test connection
-dbt debug
-
-# Run all models
-dbt run
-
-# Run specific model
-dbt run --select member_contribution_summary
-
-# Run with full refresh
-dbt run --full-refresh
-
-# Generate documentation
-dbt docs generate
-dbt docs serve
-```
-
-## Data Volumes
-- **SILVER Layer**: ~160M rows (enriched contributions)
-- **GOLD Layer**: ~5M rows (aggregated metrics)
-- **Build Time**: ~3-5 minutes for full refresh
-
-## Business Logic Examples
-
-### Risk Scoring
-```sql
--- Payment risk categorization
-CASE
-    WHEN late_payment_rate > 0.10 THEN 'High Risk'
-    WHEN late_payment_rate > 0.05 THEN 'Medium Risk'
-    ELSE 'Low Risk'
-END AS payment_risk_category
-```
-
-### Anomaly Detection
-```sql
--- Flag unusual contribution amounts
-CASE
-    WHEN total_amount < 100 OR total_amount > 500 THEN TRUE
-    ELSE FALSE
-END AS is_anomaly
-```
-
-### Income Verification
-```sql
--- Cross-reference declared vs verified income
-CASE
-    WHEN ABS(declared_income - verified_income) / verified_income < 0.05 THEN 'Verified'
-    WHEN ABS(declared_income - verified_income) / verified_income < 0.10 THEN 'Minor Discrepancy'
-    ELSE 'Major Discrepancy'
-END AS verification_status
-```
-
-## Testing
-```bash
-# Run dbt tests
+# Run all tests
 dbt test
 
 # Test specific model
-dbt test --select member_contribution_summary
+dbt test --models members_clean
+
+# Test by tag
+dbt test --models tag:pension
 ```
 
-## Deployment
-This project is designed for CI/CD deployment via:
-- Azure DevOps
-- GitHub Actions
-- dbt Cloud
+## 🚀 Quick Start
 
-## License
-Proprietary - ATP Denmark
+### Prerequisites
+- Snowflake account with ATP databases
+- ATP_ADMIN role granted to your user
+- dbt installed (via Snowflake Workspaces or locally)
 
-## Contact
-Project Owner: UlasB44
+### Running Models
 
+```bash
+# Run all models
+dbt run
+
+# Run specific domain
+dbt run --models pension
+dbt run --models housing
+dbt run --models integration
+
+# Run specific layer
+dbt run --models tag:silver
+dbt run --models tag:gold
+
+# Run single model
+dbt run --models members_clean
+```
+
+### Incremental Refresh
+
+Silver models are incremental for performance:
+
+```bash
+# Run incremental (default)
+dbt run --models members_clean
+
+# Full refresh
+dbt run --models members_clean --full-refresh
+```
+
+## 📚 Documentation
+
+### Generate Documentation
+
+```bash
+# Generate docs
+dbt docs generate
+
+# Serve docs locally
+dbt docs serve
+```
+
+### View in Snowflake
+
+Documentation is automatically available in Snowflake Workspaces under the "Documentation" tab.
+
+## 🔐 Security & Compliance
+
+- **GDPR Compliant**: All PII is masked via Snowflake masking policies
+- **Role-Based Access**: ATP_ADMIN, ATP_ANALYST, ATP_COMPLIANCE_OFFICER
+- **Audit Trail**: All model runs are logged with query tags
+- **Data Classification**: Models tagged by sensitivity (PII, financial)
+
+## 📈 Performance
+
+- **Incremental Models**: Only process changed records
+- **Partitioning**: Time-based partitioning on large tables
+- **Warehouse Sizing**: 
+  - ETL: MEDIUM (for transformations)
+  - BI: SMALL (for analytics queries)
+
+## 🔄 CI/CD
+
+Models are version-controlled and deployed via:
+1. GitHub repository: `UlasB44/atp-dbt-denmark`
+2. Snowflake Workspaces for development
+3. Automated testing on pull requests
+4. Production deployment via main branch
+
+## 📞 Support
+
+- **Owner**: ATP Data Engineering Team
+- **Slack**: #atp-data-engineering
+- **Issues**: GitHub Issues in this repository
+
+## 🎯 SLAs
+
+| Layer | Refresh Frequency | SLA | Owner |
+|-------|------------------|-----|-------|
+| Silver | Real-time (incremental) | < 15 min latency | Data Engineering |
+| Gold | Daily at 06:00 CET | < 1 hour | Analytics Team |
+
+## 📝 Change Log
+
+### Version 2.0.0 (Current)
+- ✅ Comprehensive tests for all models
+- ✅ Full documentation with business context
+- ✅ Fixed CPR validation and schema alignment
+- ✅ Added income verification model
+- ✅ Performance optimizations (incremental models)
+
+### Version 1.0.0
+- Initial dbt project structure
+- Basic pension and housing models

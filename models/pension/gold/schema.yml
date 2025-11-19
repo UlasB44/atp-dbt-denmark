@@ -1,0 +1,170 @@
+version: 2
+
+models:
+  - name: member_contribution_summary
+    description: |
+      **Member-level contribution analytics and risk assessment**
+      
+      This gold-layer model provides a comprehensive view of each member's:
+      - Total contribution history
+      - Payment behavior and risk profile
+      - Late payment statistics
+      - Active contribution period
+      
+      **Refresh**: Full refresh daily
+      **Grain**: One row per member (cpr_number)
+      **Use Cases**:
+      - Member entitlement calculations
+      - Risk assessment and compliance monitoring
+      - Customer service inquiries
+      - Predictive analytics
+      
+      **Owner**: Analytics Team
+      **SLA**: Updated daily by 06:00 CET
+      
+    columns:
+      - name: cpr_number
+        description: Member's unique CPR number
+        tests:
+          - unique
+          - not_null
+      
+      - name: full_name
+        description: Member's full name
+        tests:
+          - not_null
+      
+      - name: age
+        description: Current age of member
+      
+      - name: city
+        description: City of residence
+      
+      - name: civil_status
+        description: Marital status
+      
+      - name: total_contributed_amount
+        description: Lifetime total contributions (DKK)
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              severity: error
+      
+      - name: total_contributions
+        description: Count of contribution transactions
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              severity: warn
+      
+      - name: late_contributions_count
+        description: Number of late payments
+        tests:
+          - not_null
+      
+      - name: late_payment_rate
+        description: Percentage of payments that were late
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+      
+      - name: first_contribution_period
+        description: Earliest contribution period (YYYY-MM)
+        tests:
+          - not_null
+      
+      - name: last_contribution_period
+        description: Most recent contribution period (YYYY-MM)
+        tests:
+          - not_null
+      
+      - name: payment_risk_category
+        description: Risk classification based on late payment rate
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Low Risk', 'Medium Risk', 'High Risk']
+      
+      - name: dbt_updated_at
+        description: Last dbt processing timestamp
+        tests:
+          - not_null
+
+  - name: employer_contribution_analytics
+    description: |
+      **Employer-level contribution analytics and compliance monitoring**
+      
+      Aggregated view of employer payment behavior including:
+      - Total contributions per employer
+      - Member count and average contributions
+      - Late payment statistics
+      - Industry and size-based segmentation
+      
+      **Refresh**: Full refresh daily
+      **Grain**: One row per employer (cvr_number)
+      **Use Cases**:
+      - Employer compliance monitoring
+      - Account management prioritization
+      - Industry benchmarking
+      - Collections and follow-up
+      
+      **Owner**: Compliance Team
+      **SLA**: Updated daily by 06:00 CET
+      
+    columns:
+      - name: cvr_number
+        description: Employer's unique CVR number
+        tests:
+          - unique
+          - not_null
+      
+      - name: company_name
+        description: Legal company name
+        tests:
+          - not_null
+      
+      - name: industry_name
+        description: Industry sector (NACE)
+        tests:
+          - not_null
+      
+      - name: size_category
+        description: Company size category
+        tests:
+          - accepted_values:
+              values: ['Micro', 'Small', 'Medium', 'Large']
+      
+      - name: total_members_contributing
+        description: Count of unique members with contributions
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              severity: warn
+      
+      - name: total_employer_contributions
+        description: Total amount contributed (DKK)
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      
+      - name: avg_monthly_contribution_per_member
+        description: Average monthly contribution per member (DKK)
+        tests:
+          - not_null
+      
+      - name: total_late_payments
+        description: Count of late payment incidents
+        tests:
+          - not_null
+      
+      - name: dbt_updated_at
+        description: Last dbt processing timestamp
+        tests:
+          - not_null
+
