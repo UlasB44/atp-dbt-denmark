@@ -1,0 +1,74 @@
+# ============================================================================
+# GitHub Actions - dbt CI/CD Pipeline
+# ============================================================================
+# FREE tier includes 2,000 minutes/month for private repos
+# Unlimited for public repos!
+# ============================================================================
+
+name: dbt CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+env:
+  DBT_PROFILES_DIR: ${{ github.workspace }}
+
+jobs:
+  # ============================================================================
+  # Job 1: Build and Test
+  # ============================================================================
+  dbt-run:
+    name: dbt Build & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dbt
+        run: |
+          pip install dbt-core==1.7.0 dbt-snowflake==1.7.0
+
+      - name: Verify dbt installation
+        run: dbt --version
+
+      - name: dbt Debug
+        run: dbt debug --profiles-dir $DBT_PROFILES_DIR
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+
+      - name: dbt Run
+        run: dbt run --profiles-dir $DBT_PROFILES_DIR
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+
+      - name: dbt Test
+        run: dbt test --profiles-dir $DBT_PROFILES_DIR
+        continue-on-error: true
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+
+      - name: Upload dbt artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: dbt-artifacts
+          path: target/
+
