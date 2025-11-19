@@ -49,25 +49,16 @@ models:
         description: Declared annual income (DKK)
         tests:
           - not_null
-              min_value: 0
-              max_value: 2000000
-              severity: warn
       
       - name: monthly_rent
         description: Monthly rent amount (DKK)
         tests:
           - not_null
-              min_value: 0
-              max_value: 50000
-              severity: warn
       
       - name: household_size
         description: Number of people in household
         tests:
           - not_null
-              min_value: 1
-              max_value: 20
-              severity: warn
       
       - name: dwelling_type
         description: Type of dwelling
@@ -79,9 +70,6 @@ models:
         description: Dwelling size in square meters
         tests:
           - not_null
-              min_value: 10
-              max_value: 500
-              severity: warn
       
       - name: calculated_benefit
         description: Calculated monthly benefit amount (DKK)

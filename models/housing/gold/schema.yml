@@ -40,7 +40,6 @@ models:
         description: Total number of applications submitted
         tests:
           - not_null
-              min_value: 1
       
       - name: approved_applications
         description: Number of approved applications
@@ -56,14 +55,9 @@ models:
         description: Percentage of applications approved
         tests:
           - not_null
-              min_value: 0
-              max_value: 100
       
       - name: total_benefits_paid
         description: Total amount of benefits paid (DKK)
-        tests:
-              min_value: 0
-              severity: error
       
       - name: avg_monthly_benefit
         description: Average monthly benefit amount (DKK)
