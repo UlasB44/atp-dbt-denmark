@@ -1,29 +1,63 @@
+# ============================================================================
+# dbt Profile Template for Snowflake - SECURE VERSION
+# ============================================================================
+# ⚠️ SECURITY BEST PRACTICE: Use environment variables - NEVER hardcode credentials!
+# ============================================================================
+
 atp_denmark:
   target: dev
   outputs:
     dev:
       type: snowflake
-      account: YOUR_SNOWFLAKE_ACCOUNT  # e.g., abc12345.eu-west-1
-      user: YOUR_USERNAME
-      password: YOUR_PASSWORD  # Or use environment variable
-      role: SYSADMIN
+      # Use environment variables for ALL sensitive data
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      
+      # Non-sensitive configuration
+      role: ATP_ADMIN
       warehouse: ATP_ETL_WH
       database: ATP_PENSION
-      schema: SILVER
+      schema: PUBLIC
       threads: 4
       client_session_keep_alive: True
       query_tag: "dbt_atp_denmark"
-    
-    prod:
-      type: snowflake
-      account: YOUR_SNOWFLAKE_ACCOUNT
-      user: YOUR_USERNAME
-      password: YOUR_PASSWORD
-      role: SYSADMIN
-      warehouse: ATP_ETL_WH
-      database: ATP_PENSION
-      schema: SILVER
-      threads: 8
-      client_session_keep_alive: True
-      query_tag: "dbt_atp_denmark_prod"
 
+# ============================================================================
+# How to Set Environment Variables
+# ============================================================================
+#
+# Option 1: Shell Export (recommended for local development)
+# ----------------------------------------------------------
+# macOS/Linux:
+#   export SNOWFLAKE_ACCOUNT="UTYEYAD-XT83149"
+#   export SNOWFLAKE_USER="admin"
+#   export SNOWFLAKE_PASSWORD="your_secure_password"
+#
+# Windows PowerShell:
+#   $env:SNOWFLAKE_ACCOUNT = "UTYEYAD-XT83149"
+#   $env:SNOWFLAKE_USER = "admin"
+#   $env:SNOWFLAKE_PASSWORD = "your_secure_password"
+#
+# Option 2: .env File (with direnv or similar)
+# --------------------------------------------
+# Create .env file (add to .gitignore!):
+#   SNOWFLAKE_ACCOUNT=UTYEYAD-XT83149
+#   SNOWFLAKE_USER=admin
+#   SNOWFLAKE_PASSWORD=your_secure_password
+#
+# Option 3: Snowflake Secret (for Snowflake Workspaces)
+# -----------------------------------------------------
+# password: "{{ snowflake_secret('SECRETS.CREDENTIALS.dbt_password') }}"
+#
+# Option 4: CI/CD Pipeline Secrets
+# --------------------------------
+# Store in Azure DevOps / GitHub Actions / etc. as pipeline secrets
+#
+# ============================================================================
+# ⚠️ NEVER do this:
+# ============================================================================
+# ❌ password: "hardcoded_password_123"
+# ❌ Commit profiles.yml with real credentials
+# ❌ Share credentials in Slack/email
+# ============================================================================
