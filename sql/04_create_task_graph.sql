@@ -120,43 +120,43 @@ BEGIN
         data_quality_score
     )
     SELECT 
-        cpr_number,
-        CONCAT(first_name, ' ', last_name) AS full_name,
-        gender,
-        birth_date,
-        YEAR(CURRENT_DATE()) - YEAR(birth_date) AS age,
+        m.cpr_number,
+        CONCAT(m.first_name, ' ', m.last_name) AS full_name,
+        m.gender,
+        m.birth_date,
+        m.age,
         CASE 
-            WHEN YEAR(CURRENT_DATE()) - YEAR(birth_date) < 30 THEN '18-29'
-            WHEN YEAR(CURRENT_DATE()) - YEAR(birth_date) < 50 THEN '30-49'
-            WHEN YEAR(CURRENT_DATE()) - YEAR(birth_date) < 65 THEN '50-64'
+            WHEN m.age < 30 THEN '18-29'
+            WHEN m.age < 50 THEN '30-49'
+            WHEN m.age < 65 THEN '50-64'
             ELSE '65+'
         END AS age_group,
-        civil_status,
-        street_address,
-        postal_code,
-        city,
+        m.civil_status,
+        m.street_address,
+        m.postal_code,
+        m.city,
         CASE 
-            WHEN postal_code LIKE '1%' OR postal_code LIKE '2%' THEN 'Capital Region'
-            WHEN postal_code LIKE '3%' OR postal_code LIKE '4%' THEN 'Zealand'
-            WHEN postal_code LIKE '5%' THEN 'Southern Denmark'
-            WHEN postal_code LIKE '6%' OR postal_code LIKE '7%' THEN 'Central Denmark'
-            WHEN postal_code LIKE '8%' OR postal_code LIKE '9%' THEN 'North Denmark'
+            WHEN m.postal_code LIKE '1%' OR m.postal_code LIKE '2%' THEN 'Capital Region'
+            WHEN m.postal_code LIKE '3%' OR m.postal_code LIKE '4%' THEN 'Zealand'
+            WHEN m.postal_code LIKE '5%' THEN 'Southern Denmark'
+            WHEN m.postal_code LIKE '6%' OR m.postal_code LIKE '7%' THEN 'Central Denmark'
+            WHEN m.postal_code LIKE '8%' OR m.postal_code LIKE '9%' THEN 'North Denmark'
             ELSE 'Unknown'
         END AS region,
         TRUE AS is_active,
-        registration_date,
-        last_updated,
+        m.registration_date,
+        m.last_updated,
         -- Data quality score based on completeness
         (
-            CASE WHEN cpr_number IS NOT NULL THEN 0.25 ELSE 0 END +
-            CASE WHEN first_name IS NOT NULL THEN 0.15 ELSE 0 END +
-            CASE WHEN last_name IS NOT NULL THEN 0.15 ELSE 0 END +
-            CASE WHEN birth_date IS NOT NULL THEN 0.20 ELSE 0 END +
-            CASE WHEN postal_code IS NOT NULL THEN 0.15 ELSE 0 END +
-            CASE WHEN city IS NOT NULL THEN 0.10 ELSE 0 END
+            CASE WHEN m.cpr_number IS NOT NULL THEN 0.25 ELSE 0 END +
+            CASE WHEN m.first_name IS NOT NULL THEN 0.15 ELSE 0 END +
+            CASE WHEN m.last_name IS NOT NULL THEN 0.15 ELSE 0 END +
+            CASE WHEN m.birth_date IS NOT NULL THEN 0.20 ELSE 0 END +
+            CASE WHEN m.postal_code IS NOT NULL THEN 0.15 ELSE 0 END +
+            CASE WHEN m.city IS NOT NULL THEN 0.10 ELSE 0 END
         ) AS data_quality_score
-    FROM ATP_PENSION.RAW.MEMBERS
-    WHERE cpr_number IS NOT NULL;
+    FROM ATP_PENSION.RAW.MEMBERS m
+    WHERE m.cpr_number IS NOT NULL;
     
     -- Log execution
     INSERT INTO ATP_GOVERNANCE.METADATA.TASK_EXECUTION_LOG (
