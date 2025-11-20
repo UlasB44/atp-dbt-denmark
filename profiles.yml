@@ -3,10 +3,24 @@ atp_denmark:
   outputs:
     dev:
       type: snowflake
-      account: "{{ target.account }}"
-      user: "{{ target.user }}"
-      role: "{{ target.role }}"
+      account: UTYEYAD-XT83149
+      user: admin
+      password: "{{ env_var('SNOWFLAKE_PASSWORD', 'TpqTqe4v@M9Usorku@RA') }}"
+      role: ATP_ADMIN
       database: ATP_PENSION
       warehouse: ATP_ETL_WH
-      schema: SILVER
+      schema: PUBLIC
       threads: 4
+      client_session_keep_alive: False
+      
+    test:
+      type: snowflake
+      account: UTYEYAD-XT83149
+      user: admin
+      password: "{{ env_var('SNOWFLAKE_PASSWORD', 'TpqTqe4v@M9Usorku@RA') }}"
+      role: ATP_ADMIN
+      database: TEST_ATP_PENSION
+      warehouse: TEST_ATP_ETL_WH
+      schema: PUBLIC
+      threads: 4
+      client_session_keep_alive: False
