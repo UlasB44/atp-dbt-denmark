@@ -1,0 +1,12 @@
+atp_denmark:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: "{{ target.account }}"
+      user: "{{ target.user }}"
+      role: "{{ target.role }}"
+      database: ATP_PENSION
+      warehouse: ATP_ETL_WH
+      schema: SILVER
+      threads: 4
