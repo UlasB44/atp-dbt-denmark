@@ -409,12 +409,29 @@ LIMIT 50;
 -- MANUAL EXECUTION (For Testing)
 -- ============================================================================
 
--- Execute tasks manually (without waiting for schedule)
+-- ⚠️ IMPORTANT: You can only execute the ROOT task manually!
+-- Dependent tasks (with AFTER clause) will run automatically after their predecessor.
+
+-- Execute ONLY the root task (Task 1)
+-- This will trigger Task 2 and Task 3 automatically
 EXECUTE TASK ATP_PENSION.PUBLIC.TASK_MEMBERS_CLEAN;
--- Wait for completion, then:
-EXECUTE TASK ATP_PENSION.PUBLIC.TASK_CONTRIBUTIONS_ENRICHED;
--- Wait for completion, then:
-EXECUTE TASK ATP_PENSION.PUBLIC.TASK_MEMBER_CONTRIBUTION_SUMMARY;
+
+-- ❌ DO NOT execute dependent tasks manually - they will fail!
+-- Tasks 2 and 3 will run automatically when Task 1 completes
+
+-- Monitor execution to see the chain reaction:
+SELECT 
+    name,
+    state,
+    scheduled_time,
+    query_start_time,
+    completed_time,
+    DATEDIFF('second', query_start_time, completed_time) AS duration_seconds
+FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY(
+    SCHEDULED_TIME_RANGE_START => DATEADD('minute', -10, CURRENT_TIMESTAMP())
+))
+WHERE database_name = 'ATP_PENSION'
+ORDER BY scheduled_time DESC;
 
 -- ============================================================================
 -- SUSPEND TASKS (When Not Needed)
