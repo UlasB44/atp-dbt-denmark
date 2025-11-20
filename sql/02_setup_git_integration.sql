@@ -42,24 +42,31 @@ ALTER GIT REPOSITORY atp_dbt_repo FETCH;
 -- List files in repository
 LS @atp_dbt_repo/branches/main/;
 
--- Check dbt project structure
+-- Check dbt project structure (NOW IN dbt/ FOLDER!)
 LS @atp_dbt_repo/branches/main/dbt/;
 
 -- ============================================================================
--- 5. CREATE DBT PROJECT OBJECT
+-- 5. DROP OLD DBT PROJECT (if exists)
 -- ============================================================================
 
+DROP DBT PROJECT IF EXISTS atp_dbt_project;
+
+-- ============================================================================
+-- 6. CREATE DBT PROJECT OBJECT (UPDATED PATH!)
+-- ============================================================================
+
+-- IMPORTANT: GIT_PATH now points to 'dbt' folder where dbt_project.yml lives
 CREATE OR REPLACE DBT PROJECT atp_dbt_project
     GIT_REPOSITORY = atp_dbt_repo
     GIT_BRANCH = 'main'
-    GIT_PATH = 'dbt'  -- dbt project is in dbt/ folder
+    GIT_PATH = 'dbt'  -- THIS IS THE KEY CHANGE!
     DBT_VERSION = 'v1.7'
     PROFILE_NAME = 'atp_denmark'
     TARGET = 'dev'
     COMMENT = 'ATP Denmark native dbt project - Pension & Housing Benefits Analytics';
 
 -- ============================================================================
--- 6. GRANT PERMISSIONS
+-- 7. GRANT PERMISSIONS
 -- ============================================================================
 
 -- Grant to ATP roles
@@ -70,7 +77,7 @@ GRANT OPERATE ON DBT PROJECT atp_dbt_project TO ROLE ATP_ADMIN;
 GRANT OPERATE ON DBT PROJECT atp_dbt_project TO ROLE ATP_DATA_ENGINEER;
 
 -- ============================================================================
--- 7. TEST DBT PROJECT (compile only)
+-- 8. TEST DBT PROJECT (compile only)
 -- ============================================================================
 
 EXECUTE DBT PROJECT atp_dbt_project
@@ -84,7 +91,7 @@ SELECT * FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()));
 -- ============================================================================
 
 SELECT 'Git Integration Complete' AS status,
-       'GitHub connected, dbt project ready' AS configuration;
+       'GitHub connected, dbt project ready with GIT_PATH=dbt' AS configuration;
 
 -- ============================================================================
 -- USAGE EXAMPLES
@@ -107,4 +114,3 @@ SELECT 'Git Integration Complete' AS status,
 -- SELECT * FROM SNOWFLAKE.ACCOUNT_USAGE.DBT_PROJECT_EXECUTION_HISTORY
 -- WHERE PROJECT_NAME = 'ATP_DBT_PROJECT'
 -- ORDER BY START_TIME DESC;
-
