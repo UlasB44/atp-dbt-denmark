@@ -1,9 +1,18 @@
-# dbt
-target/
-logs/
-*.log
+# ============================================================================
+# ATP Denmark Data Platform - Git Ignore
+# ============================================================================
 
+# ============================================================================
+# dbt
+# ============================================================================
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+dbt/profiles.yml  # Contains credentials - DO NOT COMMIT
+
+# ============================================================================
 # Python
+# ============================================================================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -12,29 +21,69 @@ __pycache__/
 venv/
 env/
 ENV/
+*.egg-info/
+dist/
+build/
 
-# Credentials - but allow profiles.yml for Snowflake Workspaces
-# profiles.yml
-.env
-*.pem
-*.key
+# ============================================================================
+# Terraform
+# ============================================================================
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/crash.log
+terraform/crash.*.log
+terraform/*.tfvars  # Environment-specific (except environments/)
+!terraform/environments/*.tfvars  # Keep example environment configs
 
-# IDE
+# ============================================================================
+# IDE / Editors
+# ============================================================================
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-
-# OS
 .DS_Store
+
+# ============================================================================
+# OS
+# ============================================================================
 Thumbs.db
+.DS_Store
+*.bak
 
-# Snowflake
-*.sql.j2
+# ============================================================================
+# Logs & Temp Files
+# ============================================================================
+*.log
+*.tmp
+*.temp
+.env
+.env.local
 
-# Data files
+# ============================================================================
+# Credentials & Secrets (CRITICAL - DO NOT COMMIT)
+# ============================================================================
+**/profiles.yml
+**/secrets.*
+**/*password*
+**/*credentials*
+**/terraform.tfvars  # Except in environments/
+
+# ============================================================================
+# Project-specific
+# ============================================================================
+# Data files (if any)
 *.csv
 *.parquet
 *.json
+!dbt/seeds/*.csv  # Keep seed files
+
+# Staging/test data
 staging/
+scratch/
+tmp/
+
+# Documentation build artifacts
+site/

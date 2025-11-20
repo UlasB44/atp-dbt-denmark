@@ -8,10 +8,10 @@
 ### Step 1: Create Repository on GitHub
 1. Go to: **https://github.com/new**
 2. Fill in:
-   - **Repository name**: `atp-dbt-denmark`
-   - **Description**: `ATP Denmark dbt Data Transformation Project - Pension & Housing Benefits Analytics`
-   - **Visibility**: Public (or Private if you prefer)
-   - **DO NOT** initialize with README, .gitignore, or license (we already have these)
+ - **Repository name**: `atp-dbt-denmark`
+ - **Description**: `ATP Denmark dbt Data Transformation Project - Pension & Housing Benefits Analytics`
+ - **Visibility**: Public (or Private if you prefer)
+ - **DO NOT** initialize with README, .gitignore, or license (we already have these)
 3. Click **"Create repository"**
 
 ### Step 2: Push Your Code
@@ -48,11 +48,11 @@ gh auth login
 
 # Create and push repository
 gh repo create UlasB44/atp-dbt-denmark \
-  --public \
-  --source=. \
-  --remote=origin \
-  --push \
-  --description "ATP Denmark dbt Data Transformation Project"
+--public \
+--source=. \
+--remote=origin \
+--push \
+--description "ATP Denmark dbt Data Transformation Project"
 ```
 
 ---
@@ -62,43 +62,43 @@ gh repo create UlasB44/atp-dbt-denmark \
 ### Project Structure
 ```
 atp-dbt-denmark/
-├── README.md                          # Complete documentation
-├── dbt_project.yml                    # dbt configuration
-├── profiles_template.yml              # Snowflake connection template
-├── requirements.txt                   # Python dependencies
-├── .gitignore                         # Git ignore rules
-└── models/
-    ├── sources.yml                    # Source definitions
-    ├── pension/
-    │   ├── silver/
-    │   │   ├── members_clean.sql
-    │   │   └── contributions_enriched.sql
-    │   └── gold/
-    │       ├── member_contribution_summary.sql
-    │       └── employer_contribution_analytics.sql
-    ├── housing/
-    │   ├── silver/
-    │   │   └── applications_enriched.sql
-    │   └── gold/
-    │       └── housing_benefits_summary.sql
-    └── integration/
-        └── silver/
-            └── income_verification.sql
+ README.md                          # Complete documentation
+ dbt_project.yml                    # dbt configuration
+ profiles_template.yml              # Snowflake connection template
+ requirements.txt                   # Python dependencies
+ .gitignore                         # Git ignore rules
+ models/
+   sources.yml                    # Source definitions
+   pension/
+     silver/
+     members_clean.sql
+     contributions_enriched.sql
+     gold/
+         member_contribution_summary.sql
+         employer_contribution_analytics.sql
+   housing/
+     silver/
+     applications_enriched.sql
+     gold/
+         housing_benefits_summary.sql
+   integration/
+       silver/
+           income_verification.sql
 ```
 
 ### Models Included
-✅ **7 Production-Ready dbt Models**:
+ **7 Production-Ready dbt Models**:
 - 4 SILVER layer models (data cleansing & enrichment)
 - 3 GOLD layer models (business KPIs & analytics)
 
 ### Features
-✅ Complete README with setup instructions  
-✅ Inline SQL documentation  
-✅ Business logic examples  
-✅ Data quality checks  
-✅ Risk scoring algorithms  
-✅ Fraud detection logic  
-✅ Performance optimized queries  
+ Complete README with setup instructions  
+ Inline SQL documentation  
+ Business logic examples  
+ Data quality checks  
+ Risk scoring algorithms  
+ Fraud detection logic  
+ Performance optimized queries  
 
 ---
 
@@ -108,10 +108,10 @@ After pushing, check that everything is there:
 
 1. Go to: https://github.com/UlasB44/atp-dbt-denmark
 2. You should see:
-   - 13 files
-   - Complete README
-   - All 7 SQL models
-   - Professional documentation
+ - 13 files
+ - Complete README
+ - All 7 SQL models
+ - Professional documentation
 
 ---
 
@@ -122,7 +122,5 @@ If you encounter any issues:
 2. Verify your repository name is exactly: `atp-dbt-denmark`
 3. Check that you're pushing to: `https://github.com/UlasB44/atp-dbt-denmark.git`
 
----
-
-**Your clean, production-ready dbt project is committed and ready to push!** 🚀
+--- **Your clean, production-ready dbt project is committed and ready to push!** 
 

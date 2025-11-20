@@ -1,6 +1,6 @@
 # Azure DevOps Setup for ATP Denmark
 
-## 📁 Files in this Directory
+## Files in this Directory
 
 | File | Purpose |
 |------|---------|
@@ -11,7 +11,7 @@
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 1. **Read the setup guide**: `AZURE_DEVOPS_SETUP.md`
 2. **Create Azure DevOps project**: ATP-Denmark
@@ -23,7 +23,7 @@
 
 ---
 
-## 🔐 Required Secrets
+## Required Secrets
 
 Set these in Azure DevOps → Pipelines → Library → Variable Groups:
 
@@ -33,52 +33,52 @@ Variable Group Name: snowflake-credentials
 Variables:
 - SNOWFLAKE_ACCOUNT (plain text)
 - SNOWFLAKE_USER (plain text)
-- SNOWFLAKE_PASSWORD (🔒 secret)
+- SNOWFLAKE_PASSWORD ( secret)
 - SNOWFLAKE_USER_PROD (plain text)
-- SNOWFLAKE_PASSWORD_PROD (🔒 secret)
+- SNOWFLAKE_PASSWORD_PROD ( secret)
 ```
 
 ---
 
-## 📋 Pipeline Stages
+## Pipeline Stages
 
 ```
 Pull Request:
-  └─ Build & Test
-      ├─ dbt debug
-      ├─ dbt run
-      ├─ dbt test
-      └─ Publish results
+ Build & Test
+     dbt debug
+     dbt run
+     dbt test
+     Publish results
 
 Main Branch:
-  ├─ Build & Test
-  │   ├─ dbt debug
-  │   ├─ dbt run
-  │   ├─ dbt test
-  │   └─ Publish artifacts
-  │
-  └─ Deploy to Production
-      ├─ Manual approval required
-      ├─ dbt run (prod)
-      └─ dbt test (prod)
+ Build & Test
+  dbt debug
+  dbt run
+  dbt test
+  Publish artifacts
+
+ Deploy to Production
+     Manual approval required
+     dbt run (prod)
+     dbt test (prod)
 ```
 
 ---
 
-## ✅ Features
+## Features
 
-- ✅ Automated CI/CD on push
-- ✅ Pull Request validation
-- ✅ Multi-stage deployment (Dev → Prod)
-- ✅ Manual approval for production
-- ✅ Secure secret management
-- ✅ Test result publishing
-- ✅ dbt artifact publishing
-- ✅ Branch protection
+-  Automated CI/CD on push
+-  Pull Request validation
+-  Multi-stage deployment (Dev → Prod)
+-  Manual approval for production
+-  Secure secret management
+-  Test result publishing
+-  dbt artifact publishing
+-  Branch protection
 
 ---
 
-## 📚 Documentation
+## Documentation
 
 See `AZURE_DEVOPS_SETUP.md` for:
 - Step-by-step setup instructions
@@ -87,7 +87,5 @@ See `AZURE_DEVOPS_SETUP.md` for:
 - Customization options
 - Monitoring & observability
 
----
-
-🔷 **Azure DevOps + dbt + Snowflake = Production-Ready Data Platform!**
+--- **Azure DevOps + dbt + Snowflake = Production-Ready Data Platform!**
 

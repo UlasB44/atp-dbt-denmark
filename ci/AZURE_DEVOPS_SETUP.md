@@ -1,28 +1,28 @@
-# 🔷 Azure DevOps Setup Guide - ATP Denmark dbt Project
+# Azure DevOps Setup Guide - ATP Denmark dbt Project
 
-## 📋 Overview
+## Overview
 
 This guide will help you set up the ATP Denmark dbt project in Azure DevOps with:
-- ✅ Git repository
-- ✅ CI/CD pipelines
-- ✅ Secure secret management
-- ✅ Automated dbt runs
-- ✅ Environment management (Dev/Prod)
+-  Git repository
+-  CI/CD pipelines
+-  Secure secret management
+-  Automated dbt runs
+-  Environment management (Dev/Prod)
 
 ---
 
-## 🚀 Step-by-Step Setup
+## Step-by-Step Setup
 
 ### Step 1: Create Azure DevOps Project
 
 1. Go to https://dev.azure.com
 2. Click **"+ New project"**
 3. Fill in details:
-   - **Project name**: `ATP-Denmark`
-   - **Description**: `ATP Denmark Data Warehouse - dbt on Snowflake`
-   - **Visibility**: Private
-   - **Version control**: Git
-   - **Work item process**: Agile
+ - **Project name**: `ATP-Denmark`
+ - **Description**: `ATP Denmark Data Warehouse - dbt on Snowflake`
+ - **Visibility**: Private
+ - **Version control**: Git
+ - **Work item process**: Agile
 4. Click **"Create"**
 
 ---
@@ -34,9 +34,9 @@ This guide will help you set up the ATP Denmark dbt project in Azure DevOps with
 1. In your new project, go to **Repos** → **Files**
 2. Click **"Import a repository"**
 3. Fill in:
-   - **Clone URL**: `https://github.com/UlasB44/atp-dbt-denmark.git`
-   - **Name**: `atp-dbt-denmark`
-   - **Requires authentication**: No (public repo)
+ - **Clone URL**: `https://github.com/UlasB44/atp-dbt-denmark.git`
+ - **Name**: `atp-dbt-denmark`
+ - **Requires authentication**: No (public repo)
 4. Click **"Import"**
 
 #### Option B: Mirror from GitHub (Continuous Sync)
@@ -66,11 +66,11 @@ git push azure main --force
 |---------------|-------|------|
 | `SNOWFLAKE_ACCOUNT` | `UTYEYAD-XT83149` | Plain text |
 | `SNOWFLAKE_USER` | `admin` | Plain text |
-| `SNOWFLAKE_PASSWORD` | `TpqTqe4v@M9Usorku@RA` | 🔒 Secret |
+| `SNOWFLAKE_PASSWORD` | `TpqTqe4v@M9Usorku@RA` |  Secret |
 | `SNOWFLAKE_USER_PROD` | `admin` | Plain text |
-| `SNOWFLAKE_PASSWORD_PROD` | `<prod_password>` | 🔒 Secret |
+| `SNOWFLAKE_PASSWORD_PROD` | `<prod_password>` |  Secret |
 
-**Important**: Click the 🔒 (lock) icon for passwords to mark them as secrets!
+**Important**: Click the  (lock) icon for passwords to mark them as secrets!
 
 5. Click **"Save"**
 
@@ -95,15 +95,15 @@ git push azure main --force
 1. Go to **Pipelines** → **Environments**
 2. Click **"New environment"**
 3. Create **Production** environment:
-   - **Name**: `production`
-   - **Description**: `Snowflake Production Environment`
-   - **Resource**: None
+ - **Name**: `production`
+ - **Description**: `Snowflake Production Environment`
+ - **Resource**: None
 4. Click **"Create"**
 5. In environment settings:
-   - Go to **Approvals and checks**
-   - Add **"Approvals"**
-   - Add required approvers
-   - This ensures manual approval before production deployment
+ - Go to **Approvals and checks**
+ - Add **"Approvals"**
+ - Add required approvers
+ - This ensures manual approval before production deployment
 
 ---
 
@@ -130,121 +130,121 @@ git push azure main
 2. Click **"..."** next to `main` branch
 3. Select **"Branch policies"**
 4. Enable:
-   - ✅ **Require a minimum number of reviewers**: 1
-   - ✅ **Check for linked work items**: Optional
-   - ✅ **Check for comment resolution**: Recommended
-   - ✅ **Build validation**: Select your pipeline
+ - **Require a minimum number of reviewers**: 1
+ - **Check for linked work items**: Optional
+ - **Check for comment resolution**: Recommended
+ - **Build validation**: Select your pipeline
 
 ---
 
-## 📂 Repository Structure
+## Repository Structure
 
 ```
 ATP-Denmark/
-├── azure-pipelines.yml          # Main CI/CD pipeline
-├── models/                      # dbt models
-│   ├── pension/
-│   ├── housing/
-│   └── integration/
-├── python_models/               # Snowpark Python equivalents
-├── dbt_project.yml             # dbt configuration
-├── profiles.yml                # Connection profiles (uses secrets)
-├── terraform-atp/              # Infrastructure as Code
-└── azure-devops/               # Azure DevOps specific files
-    ├── AZURE_DEVOPS_SETUP.md
-    ├── azure-pipelines-dev.yml
-    └── azure-pipelines-prod.yml
+ azure-pipelines.yml          # Main CI/CD pipeline
+ models/                      # dbt models
+   pension/
+   housing/
+   integration/
+ python_models/               # Snowpark Python equivalents
+ dbt_project.yml             # dbt configuration
+ profiles.yml                # Connection profiles (uses secrets)
+ terraform-atp/              # Infrastructure as Code
+ azure-devops/               # Azure DevOps specific files
+   AZURE_DEVOPS_SETUP.md
+   azure-pipelines-dev.yml
+   azure-pipelines-prod.yml
 ```
 
 ---
 
-## 🔄 CI/CD Pipeline Flow
+## CI/CD Pipeline Flow
 
 ### Pull Request Pipeline
 ```
 PR Created → Build Stage
-            ├─ Install dbt
-            ├─ dbt debug (test connection)
-            ├─ dbt deps (install packages)
-            ├─ dbt run (build models in Dev)
-            ├─ dbt test (run data quality tests)
-            └─ Publish test results
+           Install dbt
+           dbt debug (test connection)
+           dbt deps (install packages)
+           dbt run (build models in Dev)
+           dbt test (run data quality tests)
+           Publish test results
 ```
 
 ### Main Branch Pipeline
 ```
 Merge to Main → Build Stage → Deploy Stage
-                ├─ dbt run (Dev)     ├─ Wait for approval
-                ├─ dbt test (Dev)    ├─ dbt run (Prod)
-                └─ Artifacts         └─ dbt test (Prod)
+               dbt run (Dev)      Wait for approval
+               dbt test (Dev)     dbt run (Prod)
+               Artifacts          dbt test (Prod)
 ```
 
 ---
 
-## 🔐 Secret Management
+## Secret Management
 
 ### Current Setup (Variable Groups)
-✅ Secrets stored in Azure DevOps Library
-✅ Encrypted at rest
-✅ Access controlled by Azure RBAC
-✅ Audit logged
+ Secrets stored in Azure DevOps Library
+ Encrypted at rest
+ Access controlled by Azure RBAC
+ Audit logged
 
 ### Enhanced Setup (Azure Key Vault)
 
 For production, link to Azure Key Vault:
 
 1. **Create Azure Key Vault**:
-   ```bash
-   az keyvault create \
-     --name atp-denmark-kv \
-     --resource-group atp-rg \
-     --location westeurope
-   ```
+ ```bash
+ az keyvault create \
+   --name atp-denmark-kv \
+   --resource-group atp-rg \
+   --location westeurope
+ ```
 
 2. **Add Secrets**:
-   ```bash
-   az keyvault secret set \
-     --vault-name atp-denmark-kv \
-     --name SNOWFLAKE-PASSWORD \
-     --value "TpqTqe4v@M9Usorku@RA"
-   ```
+ ```bash
+ az keyvault secret set \
+   --vault-name atp-denmark-kv \
+   --name SNOWFLAKE-PASSWORD \
+   --value "TpqTqe4v@M9Usorku@RA"
+ ```
 
 3. **Link to Variable Group**:
-   - Go to **Pipelines** → **Library**
-   - Click **"+ Variable group"**
-   - Toggle **"Link secrets from an Azure key vault"**
-   - Select your subscription and Key Vault
-   - Add secrets
+ - Go to **Pipelines** → **Library**
+ - Click **"+ Variable group"**
+ - Toggle **"Link secrets from an Azure key vault"**
+ - Select your subscription and Key Vault
+ - Add secrets
 
 ---
 
-## 🎯 Pipeline Features
+## Pipeline Features
 
-### ✅ Implemented Features
-
-| Feature | Status | Description |
-|---------|--------|-------------|
-| **Automated Builds** | ✅ | Triggers on code push |
-| **dbt Tests** | ✅ | Runs data quality tests |
-| **Test Results** | ✅ | Published to Azure DevOps |
-| **Artifacts** | ✅ | dbt docs and manifests |
-| **Multi-Stage** | ✅ | Dev → Prod deployment |
-| **Manual Approval** | ✅ | Required for production |
-| **Secret Management** | ✅ | Azure Variable Groups |
-| **Branch Protection** | ✅ | PR required for main |
-
-### 🔄 Coming Soon
+### Implemented Features
 
 | Feature | Status | Description |
 |---------|--------|-------------|
-| **Terraform Deploy** | 📋 Planned | IaC deployment |
-| **Snowflake Tests** | 📋 Planned | SQL-based tests |
-| **Data Quality Dashboard** | 📋 Planned | dbt docs hosting |
-| **Slack Notifications** | 📋 Planned | Build status alerts |
+| **Automated Builds** |  | Triggers on code push |
+| **dbt Tests** |  | Runs data quality tests |
+| **Test Results** |  | Published to Azure DevOps |
+| **Artifacts** |  | dbt docs and manifests |
+| **Multi-Stage** |  | Dev → Prod deployment |
+| **Manual Approval** |  | Required for production |
+| **Secret Management** |  | Azure Variable Groups |
+| **Branch Protection** |  | PR required for main |
+
+### Coming Soon
+
+| Feature | Status | Description |
+|---------|--------|-------------|
+| **Terraform Deploy** |  Planned | IaC deployment |
+| **Snowflake Tests** |  Planned | SQL-based tests |
+| **Data Quality Dashboard** |  Planned | dbt docs hosting |
+| **Slack Notifications** |  Planned | Build status alerts |
 
 ---
 
-## 📊 Monitoring & Observability
+## Monitoring & Observability
 
 ### View Pipeline Runs
 1. Go to **Pipelines** → **Pipelines**
@@ -256,9 +256,9 @@ For production, link to Azure Key Vault:
 2. Click **"1 published"** (artifacts)
 3. Download **dbt-artifacts**
 4. Extract and view:
-   - `manifest.json` - Model lineage
-   - `run_results.json` - Execution results
-   - `catalog.json` - Data catalog
+ - `manifest.json` - Model lineage
+ - `run_results.json` - Execution results
+ - `catalog.json` - Data catalog
 
 ### View Test Results
 1. Go to pipeline run
@@ -268,7 +268,7 @@ For production, link to Azure Key Vault:
 
 ---
 
-## 🔧 Customization
+## Customization
 
 ### Run on Schedule
 
@@ -276,39 +276,39 @@ Add to `azure-pipelines.yml`:
 
 ```yaml
 schedules:
-  - cron: "0 6 * * *"  # Daily at 6 AM
-    displayName: Daily dbt run
-    branches:
-      include:
-        - main
-    always: true
+- cron: "0 6 * * *"  # Daily at 6 AM
+  displayName: Daily dbt run
+  branches:
+    include:
+      - main
+  always: true
 ```
 
 ### Add Slack Notifications
 
 ```yaml
 - task: SlackNotification@1
-  inputs:
-    SlackApiToken: '$(SLACK_TOKEN)'
-    MessageAuthor: 'Azure DevOps'
-    MessageText: 'dbt pipeline completed!'
+inputs:
+  SlackApiToken: '$(SLACK_TOKEN)'
+  MessageAuthor: 'Azure DevOps'
+  MessageText: 'dbt pipeline completed!'
 ```
 
 ### Deploy Terraform First
 
 ```yaml
 - stage: Infrastructure
-  jobs:
-    - job: terraform_apply
-      steps:
-        - script: |
-            terraform init
-            terraform apply -auto-approve
+jobs:
+  - job: terraform_apply
+    steps:
+      - script: |
+          terraform init
+          terraform apply -auto-approve
 ```
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Pipeline Fails on dbt debug
 
@@ -318,9 +318,9 @@ schedules:
 1. Check Variable Group has correct credentials
 2. Verify SNOWFLAKE_ACCOUNT format (should be `UTYEYAD-XT83149`)
 3. Test connection manually:
-   ```bash
-   snowsql -a UTYEYAD-XT83149 -u admin
-   ```
+ ```bash
+ snowsql -a UTYEYAD-XT83149 -u admin
+ ```
 
 ### dbt test failures
 
@@ -343,14 +343,14 @@ schedules:
 
 ---
 
-## ✅ Checklist
+## Checklist
 
 Before going live, ensure:
 
 - [ ] Azure DevOps project created
 - [ ] Repository imported from GitHub
 - [ ] Variable group `snowflake-credentials` created
-- [ ] Secrets added and marked as 🔒
+- [ ] Secrets added and marked as 
 - [ ] Pipeline created from `azure-pipelines.yml`
 - [ ] Production environment created with approvals
 - [ ] Branch policies enabled on `main`
@@ -360,7 +360,7 @@ Before going live, ensure:
 
 ---
 
-## 📚 Additional Resources
+## Additional Resources
 
 - [Azure DevOps Documentation](https://docs.microsoft.com/en-us/azure/devops/)
 - [dbt Azure DevOps Guide](https://docs.getdbt.com/docs/deploy/azure-devops)
@@ -369,7 +369,7 @@ Before going live, ensure:
 
 ---
 
-## 🎉 You're All Set!
+## You're All Set!
 
 Your ATP Denmark project is now fully integrated with Azure DevOps!
 
@@ -381,5 +381,5 @@ Your ATP Denmark project is now fully integrated with Azure DevOps!
 5. Approve production deployment
 6. Monitor results in Azure DevOps
 
-🚀 **Happy deploying!**
+ **Happy deploying!**
 

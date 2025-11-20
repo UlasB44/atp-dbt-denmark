@@ -1,0 +1,13 @@
+packages:
+  # dbt Utils - Common macros and tests
+  - package: dbt-labs/dbt_utils
+    version: 1.1.1
+  
+  # dbt Expectations - Advanced data quality tests
+  - package: calogica/dbt_expectations
+    version: 0.10.1
+  
+  # dbt Date - Date/time utility macros
+  - package: calogica/dbt_date
+    version: 0.10.0
+
