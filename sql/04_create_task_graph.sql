@@ -178,9 +178,9 @@ END;
 
 CREATE OR REPLACE TASK ATP_PENSION.PUBLIC.TASK_CONTRIBUTIONS_ENRICHED
     WAREHOUSE = ATP_ETL_WH
-    AFTER ATP_PENSION.PUBLIC.TASK_MEMBERS_CLEAN  -- Dependency!
-    COMMENT = 'Task to enrich contributions with member and employer data'
+    AFTER ATP_PENSION.PUBLIC.TASK_MEMBERS_CLEAN
 AS
+    -- Task to enrich contributions with member and employer data
 BEGIN
     -- Truncate and reload
     TRUNCATE TABLE SILVER.CONTRIBUTIONS_ENRICHED;
@@ -248,9 +248,9 @@ END;
 
 CREATE OR REPLACE TASK ATP_PENSION.PUBLIC.TASK_MEMBER_CONTRIBUTION_SUMMARY
     WAREHOUSE = ATP_ETL_WH
-    AFTER ATP_PENSION.PUBLIC.TASK_CONTRIBUTIONS_ENRICHED  -- Dependency!
-    COMMENT = 'Task to create member contribution summary analytics'
+    AFTER ATP_PENSION.PUBLIC.TASK_CONTRIBUTIONS_ENRICHED
 AS
+    -- Task to create member contribution summary analytics
 BEGIN
     -- Truncate and reload
     TRUNCATE TABLE GOLD.MEMBER_CONTRIBUTION_SUMMARY;
@@ -337,7 +337,20 @@ CREATE TABLE IF NOT EXISTS ATP_GOVERNANCE.METADATA.TASK_EXECUTION_LOG (
 );
 
 -- ============================================================================
--- STEP 7: Resume Tasks (Start the Task Graph)
+-- STEP 7: Add Comments to Tasks
+-- ============================================================================
+
+ALTER TASK ATP_PENSION.PUBLIC.TASK_MEMBERS_CLEAN 
+SET COMMENT = 'Task to populate SILVER.MEMBERS_CLEAN from RAW.MEMBERS';
+
+ALTER TASK ATP_PENSION.PUBLIC.TASK_CONTRIBUTIONS_ENRICHED 
+SET COMMENT = 'Task to enrich contributions with member and employer data';
+
+ALTER TASK ATP_PENSION.PUBLIC.TASK_MEMBER_CONTRIBUTION_SUMMARY 
+SET COMMENT = 'Task to create member contribution summary analytics';
+
+-- ============================================================================
+-- STEP 8: Resume Tasks (Start the Task Graph)
 -- ============================================================================
 
 -- Tasks are created in SUSPENDED state by default
