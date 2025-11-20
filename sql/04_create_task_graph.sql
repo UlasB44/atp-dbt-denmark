@@ -124,11 +124,11 @@ BEGIN
         CONCAT(m.first_name, ' ', m.last_name) AS full_name,
         m.gender,
         m.birth_date,
-        m.age,
+        DATEDIFF('year', m.birth_date, CURRENT_DATE()) AS age,
         CASE 
-            WHEN m.age < 30 THEN '18-29'
-            WHEN m.age < 50 THEN '30-49'
-            WHEN m.age < 65 THEN '50-64'
+            WHEN DATEDIFF('year', m.birth_date, CURRENT_DATE()) < 30 THEN '18-29'
+            WHEN DATEDIFF('year', m.birth_date, CURRENT_DATE()) < 50 THEN '30-49'
+            WHEN DATEDIFF('year', m.birth_date, CURRENT_DATE()) < 65 THEN '50-64'
             ELSE '65+'
         END AS age_group,
         m.civil_status,
